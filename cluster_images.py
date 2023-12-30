@@ -35,8 +35,8 @@ def run_coord_update(mrc_files_list: List[Tuple[str, str]], ctf_file: str, filte
     prog_count = img_filter.update_coord(classification_src)
     filt_time = time.time() - start_filt_time
 
-    print(f'Filt time {filt_time}')
-    print(f'Total time : {time.time() - start_test_time}')
+    logger.info(f'Filtering time {filt_time}')
+    logger.info(f'Total time : {time.time() - start_test_time}')
     COLS = ['experiment', 'filt_time', 'preprocess_time', 'total_images', 'post_filtering']
     if os.path.exists(filtering_params['save_dir'] + '/results_table.csv'):
         results_csv = pd.read_csv(filtering_params['save_dir'] + '/results_table.csv')

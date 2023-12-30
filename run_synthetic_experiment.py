@@ -5,13 +5,9 @@ import logging
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from fractions import Fraction
-import aspire
-
-aspire.config.set({'logging': {'console_level': logging.ERROR}})
 
 from aspire.volume import Volume
 from aspire.image import Image
-
 from aspire.source import Simulation
 from aspire.operators import FunctionFilter
 from aspire.noise import CustomNoiseAdder
@@ -20,12 +16,9 @@ from center_detector.utils.convolution_utils import apply_filter
 from center_detector.utils.plot_utils import save_radial_info, save_patches_with_stats_info
 from center_detector.utils.general_utils import get_n_points
 
-
+logger = logging.getLogger('aspire.storage')
+logger.propagate = False
 DATA_DIR = os.path.join(os.path.dirname(__file__), "")
-
-logging.basicConfig(level=logging.ERROR)
-# logging.getLogger('aspire.nufft.cufinfft').setLevel(logging.ERROR)
-# logging.getLogger('aspire.source.images').propagate = False
 
 reconstruction_params = {
     'img_size': 55,  # Down-sample the images/reconstruction to a desired resolution

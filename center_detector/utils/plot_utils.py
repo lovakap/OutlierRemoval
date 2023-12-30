@@ -40,46 +40,6 @@ def save_patches_with_stats_info(patches: List[np.ndarray], labels: List[str], p
     plt.close()
 
 
-def save_filtered_patches_with_stats_info(patches: List[np.ndarray], labels: List[str], filter_size: int,
-                                          true_centers: List[Tuple[List[int], List[int]]],
-                                          points: List[Tuple[List[int], List[int]]], path: str, sample_label: str = "",
-                                          mark_points: bool = True, info=True, plot=False):
-    """
-    Saves given filtered patches with stats info
-    :param patches:
-    :param labels:
-    :param filter_size:
-    :param true_centers:
-    :param points:
-    :param path:
-    :param sample_label:
-    :param mark_points:
-    :param info:
-    :param plot:
-    :return:
-    """
-    os.makedirs(path, exist_ok=True)
-    fig = plt.figure(figsize=(4 * len(patches), 8), dpi=80)
-    fig.suptitle(f'filter size - {filter_size} with top {len(points[0][0])} points')
-
-    for i, patch in enumerate(patches):
-        ax = fig.add_subplot(1, len(patches), i + 1)
-        im = ax.imshow(patch)
-        if mark_points:
-            for j in range(len(points[i][0])):
-                ax.scatter(points[i][1][j], points[i][0][j], color='r')
-            ax.scatter(true_centers[i][1], true_centers[i][0], color='purple')
-        ax.axis('off')
-        if info:
-            ax.title.set_text(f'{labels[i]}\n' + get_stats_info(patch, points[i]))
-        fig.colorbar(im)
-
-    plt.savefig(path + f'filtered patch {sample_label}.png', edgecolor='none')
-    if plot:
-        plt.show()
-    plt.close()
-
-
 def save_radial_info(patches: List[np.ndarray], labels: List[str], filter_size: int,
                      points: List[Tuple[List[int], List[int]]], path: str, plot=True, return_vals=False,
                      sample_label: str = "", noise_mean=None, noise_var=None):

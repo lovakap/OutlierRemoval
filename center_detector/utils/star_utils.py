@@ -4,18 +4,6 @@ import pandas as pd
 import os
 
 
-def update_star_coord_loc(star_file, orig, updated):
-    df = star_file.get_block_by_index(0)
-    df['_rlnMicrographCoordinates'] = df['_rlnMicrographCoordinates'].str.replace(orig, updated)
-    return df
-
-
-def copy_star_coord_loc(orig_path, save_path, old, new):
-    star_f = StarFile(orig_path)
-    star_f.blocks[list(star_f.blocks.keys())[0]] = update_star_coord_loc(star_f, old, new)
-    star_f.write(save_path)
-
-
 def update_star_centers(combined, updated_coords, data_dir, save_path, mrc_size=4096, particle_size=360):
     half_p = np.ceil(particle_size / 2) + 2
     index = combined[0]
@@ -40,14 +28,3 @@ def update_star_centers(combined, updated_coords, data_dir, save_path, mrc_size=
     coord_file.blocks[list(coord_file.blocks.keys())[0]] = temp_df.reset_index(drop=True).to_dict(orient='list')
     coord_file.write(save_path + f'/{os.path.dirname(combined[1])}/' + f'{file_name}' + '_autopick.star')
 
-
-def update_picks_by_star(star_path, picks_folder, save_folder):
-    os.makedirs(save_folder, exist_ok=True)
-    new_picks = StarFile(star_path).blocks['particles']
-    for mrc_name in new_picks['_rlnMicrographName'].unique():
-        pick_star = StarFile(picks_folder + os.path.basename(mrc_name)[:-4] + '_autopick.star')
-        cols = pick_star.get_block_by_index(0).columns
-        pick_star.blocks[list(pick_star.blocks.keys())[0]] = new_picks[new_picks['_rlnMicrographName'] == mrc_name][cols].reset_index(drop=True)
-        pick_star.write(save_folder + os.path.basename(mrc_name)[:-4] + '_autopick.star')
-
-# print('end')

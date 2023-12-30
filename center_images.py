@@ -26,8 +26,9 @@ def run_center_update(mrc_files_list: List[Tuple[str, str]], ctf_file: str, filt
     src.downsample(filtering_params['patch_size'])
 
     logger.info("Perform phase flip to input images.")
-    preprocess_time = (time.time() - start_test_time) / 60
+    start_filt_time = time.time()
     image_filter = ImageFilter(filtering_params)
     image_filter.update_coord_centers(src)
-    print(f'preprocess time {preprocess_time}')
-    print(f'Total time : {time.time() - start_test_time}')
+    filt_time = time.time() - start_filt_time
+    logger.info(f'Centering time {filt_time}')
+    logger.info(f'Total time : {time.time() - start_test_time}')

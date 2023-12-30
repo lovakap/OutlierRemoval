@@ -1,4 +1,3 @@
-import pandas as pd
 from math import ceil
 from sklearn.cluster import DBSCAN
 from multiprocessing import context
@@ -44,8 +43,6 @@ class ImageFilter:
                                      i + j) for j in range(stack_size)])
             total_res.extend(results)
             progress_count += np.sum([sum(r) for r in results])
-        # logger.info(f'Extracted from {np.sum([sum(r) for r in total_res])}/{len(src)}')
-
 
         save_path = self.train_args["save_dir"] + '/' + self.train_args['dataset_name'] + '_filtered'
         os.makedirs(save_path + f'/{self.train_args["dataset_name"]}/', exist_ok=True)
