@@ -1,0 +1,8 @@
+name: ParticleSorting
+channels:
+  - conda-forge
+dependencies:
+  - python==3.8
+  - pip:
+      - aspire==0.12.1
+      - pathos==0.3.1
