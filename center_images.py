@@ -23,7 +23,7 @@ def run_center_update(mrc_files_list: List[Tuple[str, str]], ctf_file: str, filt
     logger.info(f"Set the resolution to {filtering_params['patch_size']} X {filtering_params['patch_size']}")
     # Use phase_flip to attempt correcting for CTF.
     src.phase_flip()
-    src.downsample(filtering_params['patch_size'])
+    src = src.downsample(filtering_params['patch_size'])
 
     logger.info("Perform phase flip to input images.")
     start_filt_time = time.time()

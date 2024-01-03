@@ -50,8 +50,7 @@ class ImageFilter:
 
         for i in range(src.get_metadata('__mrc_index').max() + 1):
             f_name = src.get_metadata('__mrc_filepath')[src.get_metadata('__mrc_index') == i][0]
-            coord_file = StarFile(self.train_args["save_dir"] + '/' + self.train_args[
-                "data_dir"] + f'{os.path.basename(f_name)[:-4]}' + '_autopick.star')
+            coord_file = StarFile(self.train_args["data_dir"] + f'{os.path.basename(f_name)[:-4]}' + '_autopick.star')
             temp_df = pd.DataFrame.from_dict(coord_file.get_block_by_index(0))
             for j in range(np.ceil(src.particle_size * 0.6).astype(int)):
                 half_p = np.ceil(src.particle_size * 0.6) - j
@@ -68,8 +67,9 @@ class ImageFilter:
             coord_file.write(save_path + f'/{self.train_args["dataset_name"]}/' + f'{os.path.basename(f_name)[:-4]}' + '_autopick.star')
         star_file = StarFile()
         mrc_names = np.unique(src.get_metadata('__mrc_filepath')).tolist()
-        auto_pick_names = [f'AutoPick/{self.train_args["dataset_name"]}_filtered/{os.path.basename(pth)}' for pth in
-                           glob.glob(save_path + f'/{self.train_args["dataset_name"]}/*_autopick.star')]
+        auto_pick_names = [
+            f'AutoPick/{self.train_args["dataset_name"]}_filtered/{self.train_args["dataset_name"]}/{os.path.basename(i)[:-4]}_autopick.star'
+            for i in mrc_names]
         mrc_names.sort()
         auto_pick_names.sort()
         o_dict = OrderedDict([('coordinate_files', {'_rlnMicrographName': mrc_names,
@@ -111,7 +111,6 @@ def extract_and_cluster(items, args):
     non_centric = np.ones(len(res_info["radial_info"])).astype(bool)
     non_centric[res_info["non_centric"]] = False
     results = non_centric
-
     if args.get('save_plots'):
         if os.path.exists(f"{args.get('save_dir')}/results_table.csv"):
             df = pd.read_csv(f"{args.get('save_dir')}/results_table.csv")
@@ -166,7 +165,7 @@ def extract_info(images, args):
     filtered_images = []
     radial_info = []
     non_centric = []
-    outlier_range = int(args['particle_radius'])
+    outlier_range = int(args['particle_radius']/2) - 1
     images = (images - images.mean())
     for ind, sample in enumerate(images):
         sample = sample / (sample.max())
@@ -183,17 +182,25 @@ def extract_info(images, args):
             dbscan_model = DBSCAN(eps=args['particle_radius'] / 2, min_samples=round(len(sample_points[0]) / 3))
             clustering_res = dbscan_model.fit_predict(np.vstack(sample_points).T)
             unique, counts = np.unique(clustering_res, return_counts=True)
-            if (len(unique) == 1 and unique[0] == -1):
+            if (len(unique) == 1 and unique[0] == -1) or counts[unique == -1] > round(len(sample_points[0]) / 3):
                 sample_points = (sample_points[0][:1], sample_points[1][:1])
                 centric = False
             else:
                 centers = []
                 for un in unique:
                     if un == -1:
+                        if (sample_points[0][clustering_res == -1] <= outlier_range).all() | (
+                                sample_points[0][clustering_res == -1] >= sample.shape[-1] - outlier_range).all() | (
+                                sample_points[1][clustering_res == -1] <= outlier_range).all() | (
+                                sample_points[1][clustering_res == -1] >= sample.shape[-1] - outlier_range).all():
+                            centric = False
                         continue
                     p = (np.array([sample_points[0][clustering_res == un].mean().round().astype(int)]),
                          np.array([sample_points[1][clustering_res == un].mean().round().astype(int)]))
                     centers.append(p)
+                    if (p[0][0] <= outlier_range) | (p[0][0] >= sample.shape[-1] - outlier_range) | (
+                            p[1][0] <= outlier_range) | (p[1][0] >= sample.shape[-1] - outlier_range):
+                        centric = False
                 if len(centers) == 1:
                     sample_points = centers[0]
                 else:
@@ -203,10 +210,6 @@ def extract_info(images, args):
                         np.array([sample_points[1][clustering_res == majority_class].mean().round().astype(int)]))
         else:
             sample_points = (sample_points[0][:1], sample_points[1][:1])
-
-        if (sample_points[0][0] <= outlier_range) | (sample_points[0][0] >= sample.shape[-1] - outlier_range) | (
-                sample_points[1][0] <= outlier_range) | (sample_points[1][0] >= sample.shape[-1] - outlier_range):
-            centric = False
 
         if not centric:
             non_centric.append(ind)

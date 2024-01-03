@@ -11,12 +11,12 @@ COORD_COLS = ['_rlnCoordinateX', '_rlnCoordinateY']
 filtering_params = {
     'dataset_name': '10028',
     'extraction_size': 360,  # Patch size to crop from the micrograph
-    'patch_size': 55,  # Down-sample the images/reconstruction to a desired resolution
+    'patch_size': 33,  # Down-sample the images/reconstruction to a desired resolution
     'pixel_size': 1.34,
     'data_dir': '10028/',  # Directory with mrc, coordinates files and CTF files (expecting CTF and coordinates to be in Relion format)
     'top_n': 10,  # How many points to use for centering
     'filter_ratio': .3,  # Filter size ratio to image
-    'particle_radius': 14,
+    'particle_radius': 12,
     'max_val': False,  # Use max value as center
     'cut_landscape': False,  # Take only valid result of the landscape (without padding, rolling etc.)
     'circle_cut': True,  # Set values of filter outside the circle to zero
@@ -25,19 +25,19 @@ filtering_params = {
     'end': 35,  # Up what radius to save the radial data
     'moving_avg': 1,  # Use moving averaging to smooth the radial data (relevant if larger than 1)
     'batch_size': 2048,
-    'save_dir': 'debug_testing',
+    'save_dir': 'results',
     'new_centers': False,
     'outlier_removal': True,
-    'save_plots': True,
+    'save_plots': False,
 }
 
 if filtering_params['dataset_name'] == '10028':
-    filtering_params['extraction_size'] = 360
+    filtering_params['extraction_size'] = 280
     filtering_params['pixel_size'] = 1.34
     filtering_params['data_dir'] = f'{filtering_params["dataset_name"]}/'
     # filtering_params['results_dir'] = 'sanity_check5'
 elif filtering_params['dataset_name'] == '10017':
-    filtering_params['particle_size'] = 150
+    filtering_params['extraction_size'] = 100
     filtering_params['pixel_size'] = 1.77
     filtering_params['data_dir'] = f'{filtering_params["dataset_name"]}/'
     # filtering_params['results_dir'] = 'sanity_clust3'
@@ -48,10 +48,9 @@ elif filtering_params['dataset_name'] == '10017':
 
 
 mrc_files = glob.glob(filtering_params['data_dir'] + '*.mrc')
-auto_pick = [ctf for ctf in glob.glob(filtering_params['data_dir'] + '*.star') if '_autopick' in ctf]
 ctf_file = filtering_params['data_dir'] + 'micrographs_ctf.star'
 mrc_files.sort()
-auto_pick.sort()
+auto_pick = [mrc[:-4] + '_autopick.star' for mrc in mrc_files]
 files_list = [(mrc_files[i], auto_pick[i]) for i in range(len(mrc_files))]
 if filtering_params['new_centers']:
     run_center_update(mrc_files_list=files_list, ctf_file=ctf_file, filtering_params=filtering_params)
