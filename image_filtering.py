@@ -165,7 +165,7 @@ def extract_info(images, args):
     filtered_images = []
     radial_info = []
     non_centric = []
-    outlier_range = int(args['particle_radius']/2) - 1
+    outlier_range = args['particle_radius'] + args['add_value']
     images = (images - images.mean())
     for ind, sample in enumerate(images):
         sample = sample / (sample.max())
@@ -179,10 +179,10 @@ def extract_info(images, args):
                                      add_value=args["add_value"])
         centric = True
         if len(sample_points[0]) > 1:
-            dbscan_model = DBSCAN(eps=args['particle_radius'] / 2, min_samples=round(len(sample_points[0]) / 3))
+            dbscan_model = DBSCAN(eps=args['particle_radius'], min_samples=round(len(sample_points[0]) / 3))
             clustering_res = dbscan_model.fit_predict(np.vstack(sample_points).T)
             unique, counts = np.unique(clustering_res, return_counts=True)
-            if (len(unique) == 1 and unique[0] == -1) or counts[unique == -1] > round(len(sample_points[0]) / 3):
+            if counts[unique == -1] > round(len(sample_points[0]) / 3):
                 sample_points = (sample_points[0][:1], sample_points[1][:1])
                 centric = False
             else:

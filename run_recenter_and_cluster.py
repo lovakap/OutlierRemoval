@@ -11,7 +11,7 @@ COORD_COLS = ['_rlnCoordinateX', '_rlnCoordinateY']
 filtering_params = {
     'dataset_name': '10028',
     'extraction_size': 360,  # Patch size to crop from the micrograph
-    'patch_size': 33,  # Down-sample the images/reconstruction to a desired resolution
+    'patch_size': 55,  # Down-sample the images/reconstruction to a desired resolution
     'pixel_size': 1.34,
     'data_dir': '10028/',  # Directory with mrc, coordinates files and CTF files (expecting CTF and coordinates to be in Relion format)
     'top_n': 10,  # How many points to use for centering
@@ -33,18 +33,16 @@ filtering_params = {
 
 if filtering_params['dataset_name'] == '10028':
     filtering_params['extraction_size'] = 280
+    filtering_params['particle_radius'] = 17
     filtering_params['pixel_size'] = 1.34
-    filtering_params['data_dir'] = f'{filtering_params["dataset_name"]}/'
-    # filtering_params['results_dir'] = 'sanity_check5'
 elif filtering_params['dataset_name'] == '10017':
-    filtering_params['extraction_size'] = 100
+    filtering_params['extraction_size'] = 120
     filtering_params['pixel_size'] = 1.77
-    filtering_params['data_dir'] = f'{filtering_params["dataset_name"]}/'
-    # filtering_params['results_dir'] = 'sanity_clust3'
-# elif filtering_params['dataset_name'] == '10005':
-#     filtering_params['particle_size'] = 200
-#     filtering_params['pixel_size'] = 1.2156
-#     filtering_params['results_dir'] = 'sanity_clust'
+elif filtering_params['dataset_name'] == '10005':
+    filtering_params['extraction_size'] = 180
+    filtering_params['particle_radius'] = 10
+    filtering_params['pixel_size'] = 1.2156
+filtering_params['data_dir'] = f'{filtering_params["dataset_name"]}/'
 
 
 mrc_files = glob.glob(filtering_params['data_dir'] + '*.mrc')
