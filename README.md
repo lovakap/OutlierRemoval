@@ -24,7 +24,7 @@ This repository contains an implementation of outlier removal in cryo-electron m
     To reproduce the experiments on real cryo-EM datasets, execute:
 
     ```bash
-       python run_real_data_experiment.py
+       python run_real_data_experiment.py --dataset_name "10028" --extraction_size 360 --outlier_removal
 
 ### Requirements:
 To run the real data experiments, ensure you have a directory with the following structure:
