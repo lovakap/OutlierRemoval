@@ -1,4 +1,4 @@
-name: ParticleSorting
+name: outlier-removal
 channels:
   - conda-forge
 dependencies:

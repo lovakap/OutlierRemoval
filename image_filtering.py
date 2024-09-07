@@ -105,6 +105,13 @@ class ImageFilter:
                           range(stack_size)])
 
 
+def run_experimental(images, args):
+    res_info = extract_info(images, args)
+    non_centric = np.ones(len(res_info["radial_info"])).astype(bool)
+    non_centric[res_info["non_centric"]] = False
+    return non_centric
+
+
 def extract_and_cluster(items, args):
     images, index = items
     res_info = extract_info(images, args)
