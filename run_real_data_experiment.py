@@ -67,3 +67,7 @@ def execute_experiment(args):
         run_coord_update(mrc_files_list=files_list, ctf_file=ctf_file, filtering_params=filtering_params)
         logger.info(f'Outliers were removed')
 
+
+if __name__ == "__main__":
+    args = parse_arguments()
+    execute_experiment(args)

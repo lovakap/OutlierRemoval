@@ -4,13 +4,14 @@ This repository contains an implementation of outlier removal in cryo-electron m
 
 ## Setup
 
-1. **Create a Conda environment:**
+1. **Create a Virtual environment:**
    
-   To set up the required dependencies, create a Conda environment using the provided `requirements.yml` file:
+   To set up the required dependencies, create a Virtual environment with python=3.8 using the provided `requirements.txt` file:
 
    ```bash
-   conda env create -f requirements.yml
-   conda activate outlier-removal
+   python3.8 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
    
 2. **Synthetic Data Experiments:**
 
