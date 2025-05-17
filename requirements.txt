@@ -1,0 +1,3 @@
+aspire==0.13.0
+pandas==2.0.3
+pathos==0.3.3
